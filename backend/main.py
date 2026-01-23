@@ -1,8 +1,33 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
 
 app = Flask(__name__)
 CORS(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
+
+class Base(DeclarativeBase):
+  pass
+
+db = SQLAlchemy(app, model_class=Base)
+
+class TodoItem(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(100))
+    done: Mapped[bool] = mapped_column(default=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "done": self.done
+        }
+
+with app.app_context():
+    db.create_all()
 
 todo_list = [
     { "id": 1,
@@ -15,7 +40,8 @@ todo_list = [
 
 @app.route('/api/todos/', methods=['GET'])
 def get_todos():
-    return jsonify(todo_list)
+    todos = TodoItem.query.all()
+    return jsonify([todo.to_dict() for todo in todos])
 
 def new_todo(data):
     if len(todo_list) == 0:
