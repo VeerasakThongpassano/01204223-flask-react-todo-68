@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect } from 'vitest'
 import TodoItem from '../TodoItem.jsx'
 
-const baseTodo = {             // ** TodoItem พื้นฐานสำหรับทดสอบ
+const baseTodo = {
   id: 1,
   title: 'Sample Todo',
   done: false,
