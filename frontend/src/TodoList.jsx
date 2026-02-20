@@ -12,7 +12,7 @@ function TodoList({apiUrl}) {
   const { username, accessToken, logout } = useAuth();
 
   useEffect(() => {
-    fetchTodoList();
+      fetchTodoList();
   }, [username]);
 
   async function fetchTodoList() {
@@ -22,7 +22,7 @@ function TodoList({apiUrl}) {
           'Authorization': `Bearer ${accessToken}`
         }
       });
-      if (!response.ok) { 
+      if (!response.ok) {
         throw new Error('Network error');
       }
       const data = await response.json();
@@ -38,6 +38,9 @@ function TodoList({apiUrl}) {
     try {
       const response = await fetch(toggle_api_url, {
         method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
       })
       if (response.ok) {
         const updatedTodo = await response.json();
@@ -54,6 +57,7 @@ function TodoList({apiUrl}) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({ 'title': newTitle }),
       });
@@ -72,6 +76,9 @@ function TodoList({apiUrl}) {
     try {
       const response = await fetch(delete_api_url, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
       });
       if (response.ok) {
         setTodoList(todoList.filter(todo => todo.id !== id));
@@ -88,6 +95,7 @@ function TodoList({apiUrl}) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({ 'message': newComment }),
       });
@@ -104,8 +112,8 @@ function TodoList({apiUrl}) {
       <h1>Todo List</h1>
       <ul>
         {todoList.map(todo => (
-          <TodoItem 
-            key={todo.id} 
+          <TodoItem
+            key={todo.id}
             todo={todo}
             toggleDone={toggleDone}
             deleteTodo={deleteTodo}
@@ -117,7 +125,6 @@ function TodoList({apiUrl}) {
       <button onClick={() => {addNewTodo()}}>Add</button>
       <br/>
       <a href="/about">About</a>
-      <br/>
       <br/>
       {username && (
         <a href="#" onClick={(e) => {e.preventDefault(); logout();}}>Logout</a> 
